@@ -21,9 +21,14 @@ class App extends Spine.Controller
     'click .phrase': 'select'
     'touchend .phrase': 'select'
     'click .image': 'open'
+    'touchend .image': 'open'
   
   constructor: ->
     super
+    
+    $(document).bind 'touchstart', =>
+      @_touchEnabled = true
+      $(document).unbind 'touchstart'
     
     text = text.replace /\.$/, ''
     phrases = text.split /\.\s*/
@@ -43,6 +48,7 @@ class App extends Spine.Controller
   # ---------------------------------------------------------------------------
     
   select: (e) ->
+    return if @_currentImage
     @_deselect()
     phrase = $(e.currentTarget)
     text = phrase.text()
@@ -164,8 +170,8 @@ class App extends Spine.Controller
     item.css(left: left, top: top)
     props = {}
     distance = 75
-    duration = 200
-    delay = 100
+    duration = 300
+    delay = 200
     if direction == 'left'
       props.translateX = "#{distance}px"
     else if direction == 'right'
@@ -274,13 +280,15 @@ class App extends Spine.Controller
   # ---------------------------------------------------------------------------
   
   open: (e) ->
+    # return if @_touchEnabled
     image = $(e.currentTarget)
     if image.hasClass('open')
-      @_close(image)
+      # @_close(image)
     else
       @_open(image)
   
   _open: (image) ->
+    return if @_currentImage == image
     @_close(@_currentImage) if @_currentImage
     @_currentImage = image
     image.addClass('open')
@@ -305,13 +313,12 @@ class App extends Spine.Controller
 
     translateX = (left-original.left)/4
     translateY = (top-original.top)/4    
-    image.gfx({scale: 4, translateX: "#{translateX}px", translateY: "#{translateY}px"}, {duration: 300, complete: showPreview, easing: 'linear'})
+    image.gfx({scale: 4, translateX: "#{translateX}px", translateY: "#{translateY}px"}, {duration: 400, complete: showPreview, easing: 'linear'})
   
   _close: (image) =>
-    @_currentImage = null
     image.removeClass('open')
     original = image.data('originalOffset')
-    image.gfx({scale: 1, left: original.left, top: original.top}, {duration: 200})
+    image.gfx({scale: 1, left: original.left, top: original.top}, {duration: 400})
     $(".preview").remove()
 
 module.exports = App

@@ -13,6 +13,7 @@ class Preview extends Spine.Controller
   constructor: ->
     super
 
+    @_isVisible = false
 
     @content = $('<div />').addClass('content')
     @append @content
@@ -46,6 +47,7 @@ class Preview extends Spine.Controller
   
   show: ->
     @el.gfx({opacity: 1}, {duration: 300})
+    @_isVisible = true
   
   like: ->
     alert 'liking'
@@ -54,8 +56,10 @@ class Preview extends Spine.Controller
     alert 'disliking'
   
   close: ->
+    return unless @_isVisible
+    @_isVisible = false
     @didClose(@image) if @didClose?
-  
+    @el.remove()
 
 
 
