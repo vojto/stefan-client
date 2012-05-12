@@ -160,7 +160,7 @@ class App extends Spine.Controller
   
   _addImage: (left, top, direction) ->
     item = $("<div />").addClass('image')
-    image = $("<img />").addClass('thumbnail').attr('src', '/test.png').appendTo(item)
+    image = $("<img />").addClass('thumbnail').attr('src', '/test.jpg').appendTo(item)
     item.css(left: left, top: top)
     props = {}
     distance = 75
@@ -297,7 +297,8 @@ class App extends Spine.Controller
     left = windowWidth/2 - (windowWidth-width)/2;
     top = windowHeight/2 - (windowHeight-height)/2;
     
-    preview = new Preview(image: image, left: left, top: top)
+    preview = new Preview(image: image, left: left, top: top, width: width, height: height)
+    preview.didClose = @_close
     @append preview
 
     showPreview = -> preview.show()
@@ -306,7 +307,7 @@ class App extends Spine.Controller
     translateY = (top-original.top)/4    
     image.gfx({scale: 4, translateX: "#{translateX}px", translateY: "#{translateY}px"}, {duration: 300, complete: showPreview, easing: 'linear'})
   
-  _close: (image) ->
+  _close: (image) =>
     @_currentImage = null
     image.removeClass('open')
     original = image.data('originalOffset')
