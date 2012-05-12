@@ -9,7 +9,9 @@
     "spine/lib/route",
     "spine/lib/tmpl",
     "spine/lib/manager",
-    "gfx"
+    "gfx",
+    "gfx/lib/gfx.flip",
+    "spine.mobile"
   ],
   "libs": []
 }

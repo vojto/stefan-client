@@ -6,7 +6,9 @@ text = require('./phrases')
 Spine = require('spine')
 _     = require('lib/underscore')
 
-Preview = require('controllers/preview')
+Navigation  = require('controllers/navigation')
+Preview     = require('controllers/preview')
+Game        = require('controllers/game')
 
 IMAGE_HEIGHT = 100
 IMAGE_MARGIN_TOP = 10
@@ -25,6 +27,13 @@ class App extends Spine.Controller
   
   constructor: ->
     super
+    
+    @_fontSize = 25
+    
+    @navigation = new Navigation(app: @)
+    @game       = new Game(app: @)
+    
+    @main = $(".main")
     
     $(document).bind 'touchstart', =>
       @_touchEnabled = true
@@ -48,7 +57,6 @@ class App extends Spine.Controller
   # ---------------------------------------------------------------------------
     
   select: (e) ->
-    return if @_currentImage
     @_deselect()
     phrase = $(e.currentTarget)
     text = phrase.text()
@@ -81,6 +89,10 @@ class App extends Spine.Controller
       phrase = $(phrase)
       phrase.html(phrase.text())
     @$(".image").remove()
+    @_clearCanvas()
+  
+  _clearCanvas: ->
+    @context.clearRect(0, 0, @canvas.width, @canvas.height)
     
   # Showing images
   # ---------------------------------------------------------------------------
@@ -91,7 +103,7 @@ class App extends Spine.Controller
     edges = @_allEdges(phrase, hilights)
     balancedEdges = @_balanceEdges(edges)
 
-    @context.clearRect(0, 0, @canvas.width, @canvas.height)
+    @_clearCanvas()
     $(@canvas).gfx(opacity: 0, {duration: 0, queue: false})
     @_imagesAdded = 0
 
@@ -320,5 +332,30 @@ class App extends Spine.Controller
     original = image.data('originalOffset')
     image.gfx({scale: 1, left: original.left, top: original.top}, {duration: 400})
     $(".preview").remove()
+
+  # Adjusting font size
+  # ---------------------------------------------------------------------------
+  
+  smaller: ->
+    @_fontSize -= 1
+    @_applyFontSize()
+  
+  larger: ->
+    @_fontSize += 1
+    @_applyFontSize()
+  
+  _applyFontSize: ->
+    @_deselect()
+    $("#content").css({fontSize: "#{@_fontSize}px"})
+  
+  # Playing the game
+  # ---------------------------------------------------------------------------
+  
+  showGame: ->
+    @_deselect()
+    @el.toggle()
+    @game.toggle()
+    
+    
 
 module.exports = App

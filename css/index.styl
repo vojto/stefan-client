@@ -5,15 +5,25 @@
   margin 0px
   padding 0px
 
+.fl
+  float left
+
+.fr
+  float right
+
+.hidden
+  display none
+
 body
   background #f8f8f8
   color #000
+  font-family 'Goudy Bookletter 1911', serif;
   
   &.selected
     background #dadada
 
 #content
-  margin 150px 150px
+  padding 150px 150px
   font-size 25px
   font-family 'Goudy Bookletter 1911', serif;
   line-height 150%
@@ -97,3 +107,85 @@ canvas
   top 0px
   left 0px
   pointer-events none
+
+// Navigation
+// ----------------------------------------------------------------------------
+
+#navigation
+  background #000
+  height 60px
+  
+  .fl
+    margin-left 10px
+  .fr
+    margin-right 10px
+  
+  .button
+    cursor pointer
+    display block
+    width 45px
+    height 33px
+    background red
+    float left
+    border 1px solid #6b6b6b
+    border-radius(3px)
+    margin-right 5px
+    margin-left 5px
+    margin-top 12px
+    
+    &.smaller
+      background url(/button_smaller.png)
+    &.larger
+      background url(/button_larger.png)
+    &.plus
+      background url(/button_add.png)
+    &.game
+      background url(/button_game.png)
+
+// Game
+// ----------------------------------------------------------------------------
+
+#game
+  h1
+    margin-bottom 10px
+
+  text-align center
+  margin-top 50px
+  
+  .options
+    width 400px
+    margin auto
+    margin-top 50px
+    .option
+      width 200px
+      height 30px
+      margin-bottom 20px
+      float left
+      font-size 25px
+      border-box()
+      cursor pointer
+      &:hover
+        border-bottom 2px solid #000
+
+  .result
+    h1
+      padding-top 240px
+      font-size 40px
+    
+    &.correct
+      background url(/shape_correct.png) no-repeat center 60px
+    
+    &.wrong
+      background url(/shape_wrong.png) no-repeat center 60px
+    
+    .button
+      display block
+      color #959595
+      font-size 20px
+      border 1px solid #bebebe
+      width 150px
+      margin auto
+      margin-top 50px
+      padding 10px 0px
+      border-radius(3px)
+      cursor pointer
