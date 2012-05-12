@@ -100,25 +100,56 @@ class App extends Spine.Controller
     # $(@canvas).gfxFadeIn()
 
   _addHorizontalImages: (hilights, selectedHilights, offset, direction) ->
+    parsedHilights = []
     for hilightName in selectedHilights
       hilight = hilights[hilightName]
       left = hilight.frame().left
       left -= (IMAGE_WIDTH - hilight.frame().width)/2
-      @_addGlow(hilight, left, offset, direction)
-      @_addImage(left, offset, direction)
+      hilight.data('imagePosition', {left: left, top: offset})
+      hilight.data('direction', direction)
+      parsedHilights.push(hilight)
+    @_shiftImages(parsedHilights, 'left', IMAGE_WIDTH+IMAGE_MARGIN_LEFT)
+    @_addImages(parsedHilights)
   
   _addVerticalImages: (hilights, selectedHilights, offset, direction) ->
+    parsedHilights = []
     for hilightName in selectedHilights
       hilight = hilights[hilightName]
       top = hilight.frame().top
       top -= (IMAGE_HEIGHT - hilight.frame().height)/2
-      @_addGlow(hilight, offset, top, direction)
-      @_addImage(offset, top, direction)
+      hilight.data('imagePosition', {left: offset, top: top})
+      hilight.data('direction', direction)
+      parsedHilights.push(hilight)
+    @_shiftImages(parsedHilights, 'top', IMAGE_HEIGHT+IMAGE_MARGIN_TOP)
+    @_addImages(parsedHilights)
+  
+  _shiftImages: (hilights, axis, size) ->
+    last = _.first(hilights)
+    for hilight, i in hilights
+      continue if i == 0
+      continue unless last
+      lastImage = last.data('imagePosition')
+      currentImage = hilight.data('imagePosition')
+      overlap = currentImage[axis] - (lastImage[axis]+size)
+      console.log overlap
+      if overlap < 0
+        half = Math.abs(overlap)/2
+        lastImage[axis] -= half
+        currentImage[axis] += half
+        last.data('imagePosition', lastImage)
+        hilight.data('imagePosition', currentImage)
+      last = hilight
+  
+  _addImages: (hilights) ->
+    for hilight in hilights
+      direction = hilight.data('direction')
+      position = hilight.data('imagePosition')
+      @_addGlow(hilight, position.left, position.top, direction)
+      @_addImage(position.left, position.top, direction)
   
   _addGlow: (hilight, left, top, direction) ->
     frame = hilight.frame()
     imageFrame = {left: left, top: top, width: IMAGE_WIDTH, height: IMAGE_HEIGHT}
-    console.log "Adding hilight at hilight frame: ", frame
     
     console.log direction
     if direction == 'top'
