@@ -62,26 +62,29 @@ class App extends Spine.Controller
     phraseFrame = phrase.frame()
     $("#bounds").css(phraseFrame)
 
+    edges = @_allEdges(phrase, hilights)
+    balancedEdges = @_balanceEdges(edges)
+    console.log balancedEdges
+  
+  _allEdges: (phrase, hilights) ->
     edges = {}
-
+    phraseFrame = phrase.frame()
     for hilightName, hilight of hilights
       # Find the closest edge of it
       hilight = $(hilight)
       frame = hilight.frame()
       edges[hilightName] = @_edges(phraseFrame, frame)
-    
-    # Balance hilights to the edges
+    edges
+  
+  _balanceEdges: (edges) ->
     balancedEdges = {left: [], right: [], top: [], bottom: []}
     while !_.isEmpty(edges)
       for edge, items of balancedEdges
-        # Grab the first hilight
         hilightName = @_hilightForEdge(edges, edge)
-        # console.log "hilight for #{edge}: #{hilightName}", edges
         continue unless hilightName
         balancedEdges[edge].push(hilightName)
         delete edges[hilightName]
-    
-    console.log balancedEdges
+    balancedEdges
   
   _hilightForEdge: (hilightsByEdges, edge) ->
     for hilightName, edges of hilightsByEdges
