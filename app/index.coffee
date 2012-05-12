@@ -124,6 +124,12 @@ class App extends Spine.Controller
     @_addImages(parsedHilights)
   
   _shiftImages: (hilights, axis, size) ->
+    hilights.sort (a, b) ->
+      aPos = a.data('imagePosition')
+      bPos = b.data('imagePosition')
+      return -1 if aPos[axis] < bPos[axis]
+      return 1 if aPos[axis] > bPos[axis]
+      0
     last = _.first(hilights)
     for hilight, i in hilights
       continue if i == 0
