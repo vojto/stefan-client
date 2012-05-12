@@ -39,15 +39,27 @@ body.selected {
   height: 0px;
 }
 .image {
-  background: url("/test.png");
+  z-index: 15;
+  background: #000;
   width: 130px;
   height: 100px;
   position: absolute;
   -moz-box-shadow: 0px 1px 10px rgba(0,0,0,0.50);
   -webkit-box-shadow: 0px 1px 10px rgba(0,0,0,0.50);
   box-shadow: 0px 1px 10px rgba(0,0,0,0.50);
+  -webkit-transform-origin: 0% 0%;
+}
+.image.open {
+  z-index: 20;
+}
+.preview {
+  position: absolute;
+  z-index: 25;
+  pointer-events: none;
+  -webkit-transform-origin: 0% 0%;
 }
 canvas {
+  z-index: 10;
   position: absolute;
   top: 0px;
   left: 0px;
