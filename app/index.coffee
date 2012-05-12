@@ -5,6 +5,11 @@ text = require('./phrases')
 Spine = require('spine')
 _     = require('lib/underscore')
 
+IMAGE_HEIGHT = 80
+IMAGE_MARGIN_TOP = 10
+IMAGE_MARGIN_LEFT = 10
+IMAGE_WIDTH = 110
+
 # TODO:
 # - Deselecting phrase by tapping somewhere else
 
@@ -64,7 +69,37 @@ class App extends Spine.Controller
 
     edges = @_allEdges(phrase, hilights)
     balancedEdges = @_balanceEdges(edges)
-    console.log balancedEdges
+    
+    # console.log hilights
+    # console.log balancedEdges
+
+    topOffset = phraseFrame.top - (IMAGE_HEIGHT + IMAGE_MARGIN_TOP)
+    @_addHorizontalImages(hilights, balancedEdges.top, topOffset)
+    bottomOffset = (phraseFrame.top+phraseFrame.height) + IMAGE_MARGIN_TOP
+    @_addHorizontalImages(hilights, balancedEdges.bottom, bottomOffset)
+    leftOffset = phraseFrame.left - (IMAGE_WIDTH + IMAGE_MARGIN_LEFT)
+    @_addVerticalImages(hilights, balancedEdges.left, leftOffset)
+    rightOffset = (phraseFrame.left+phraseFrame.width) + IMAGE_MARGIN_LEFT
+    @_addVerticalImages(hilights, balancedEdges.right, rightOffset)
+
+  _addHorizontalImages: (hilights, selectedHilights, offset) ->
+    for hilightName in selectedHilights
+      hilight = hilights[hilightName]
+      left = hilight.frame().left
+      left -= (IMAGE_WIDTH - hilight.frame().width)/2
+      @_addImage(left, offset)
+  
+  _addVerticalImages: (hilights, selectedHilights, offset) ->
+    for hilightName in selectedHilights
+      hilight = hilights[hilightName]
+      top = hilight.frame().top
+      top -= (IMAGE_HEIGHT - hilight.frame().height)/2
+      @_addImage(offset, top)
+    
+  _addImage: (left, top) ->
+    item = $("<div />").addClass('image')
+    item.css(left: left, top: top)
+    @append item
   
   _allEdges: (phrase, hilights) ->
     edges = {}
@@ -124,5 +159,6 @@ class App extends Spine.Controller
     for phrase in phrases
       phrase = $(phrase)
       phrase.html(phrase.text())
+    @$(".image").remove()
 
 module.exports = App
