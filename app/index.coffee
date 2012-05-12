@@ -1,5 +1,6 @@
 require('lib/setup')
 require('lib/jquery_frame')
+require('gfx')
 
 text = require('./phrases')
 Spine = require('spine')
@@ -73,33 +74,50 @@ class App extends Spine.Controller
     # console.log hilights
     # console.log balancedEdges
 
-    topOffset = phraseFrame.top - (IMAGE_HEIGHT + IMAGE_MARGIN_TOP)
-    @_addHorizontalImages(hilights, balancedEdges.top, topOffset)
-    bottomOffset = (phraseFrame.top+phraseFrame.height) + IMAGE_MARGIN_TOP
-    @_addHorizontalImages(hilights, balancedEdges.bottom, bottomOffset)
-    leftOffset = phraseFrame.left - (IMAGE_WIDTH + IMAGE_MARGIN_LEFT)
-    @_addVerticalImages(hilights, balancedEdges.left, leftOffset)
-    rightOffset = (phraseFrame.left+phraseFrame.width) + IMAGE_MARGIN_LEFT
-    @_addVerticalImages(hilights, balancedEdges.right, rightOffset)
+    @_imagesAdded = 0
 
-  _addHorizontalImages: (hilights, selectedHilights, offset) ->
+    topOffset = phraseFrame.top - (IMAGE_HEIGHT + IMAGE_MARGIN_TOP)
+    @_addHorizontalImages(hilights, balancedEdges.top, topOffset, 'top')
+    bottomOffset = (phraseFrame.top+phraseFrame.height) + IMAGE_MARGIN_TOP
+    @_addHorizontalImages(hilights, balancedEdges.bottom, bottomOffset, 'bottom')
+    leftOffset = phraseFrame.left - (IMAGE_WIDTH + IMAGE_MARGIN_LEFT)
+    @_addVerticalImages(hilights, balancedEdges.left, leftOffset, 'left')
+    rightOffset = (phraseFrame.left+phraseFrame.width) + IMAGE_MARGIN_LEFT
+    @_addVerticalImages(hilights, balancedEdges.right, rightOffset, 'right')
+
+  _addHorizontalImages: (hilights, selectedHilights, offset, direction) ->
     for hilightName in selectedHilights
       hilight = hilights[hilightName]
       left = hilight.frame().left
       left -= (IMAGE_WIDTH - hilight.frame().width)/2
-      @_addImage(left, offset)
+      @_addImage(left, offset, direction)
   
-  _addVerticalImages: (hilights, selectedHilights, offset) ->
+  _addVerticalImages: (hilights, selectedHilights, offset, direction) ->
     for hilightName in selectedHilights
       hilight = hilights[hilightName]
       top = hilight.frame().top
       top -= (IMAGE_HEIGHT - hilight.frame().height)/2
-      @_addImage(offset, top)
+      @_addImage(offset, top, direction)
     
-  _addImage: (left, top) ->
+  _addImage: (left, top, direction) ->
     item = $("<div />").addClass('image')
     item.css(left: left, top: top)
+    props = {}
+    if direction == 'left'
+      props.marginLeft = 50
+    else if direction == 'right'
+      props.marginLeft = -50
+    else if direction == 'top'
+      props.marginTop = 50
+    else if direction == 'bottom'
+      props.marginTop = -50
+    props.opacity = 0
+    props.scale = 0.5
+    item.gfx(props, {duration: 0})
     @append item
+    item.delay(@_imagesAdded * 100)
+    item.gfx({opacity: 1, scale: 1, marginLeft: 0, marginTop: 0}, {duration: 400})
+    @_imagesAdded += 1
   
   _allEdges: (phrase, hilights) ->
     edges = {}
