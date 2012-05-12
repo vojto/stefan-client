@@ -174,7 +174,7 @@ class App extends Spine.Controller
       props.translateY = "-#{distance}px"
     props.opacity = 0
     props.scale = 0.5
-    item.gfx(props, {duration: 0})
+    item.gfx(props, {duration: 1})
     @append item
     item.delay(@_imagesAdded * delay)
     item.gfx({opacity: 1, scale: 1, translateX: "0px", translateY: "0px"}, {duration: duration})
@@ -279,6 +279,8 @@ class App extends Spine.Controller
       @_open(image)
   
   _open: (image) ->
+    @_close(@_currentImage) if @_currentImage
+    @_currentImage = image
     image.addClass('open')
     
     original = image.offset()
@@ -307,6 +309,7 @@ class App extends Spine.Controller
     image.gfx({scale: 4, translateX: "#{translateX}px", translateY: "#{translateY}px"}, {duration: 300, complete: showPreview, easing: 'linear'})
   
   _close: (image) ->
+    @_currentImage = null
     image.removeClass('open')
     original = image.data('originalOffset')
     image.gfx({scale: 1, left: original.left, top: original.top}, {duration: 200})
