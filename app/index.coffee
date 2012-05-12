@@ -6,10 +6,10 @@ text = require('./phrases')
 Spine = require('spine')
 _     = require('lib/underscore')
 
-IMAGE_HEIGHT = 80
+IMAGE_HEIGHT = 100
 IMAGE_MARGIN_TOP = 10
 IMAGE_MARGIN_LEFT = 10
-IMAGE_WIDTH = 110
+IMAGE_WIDTH = 130
 
 # TODO:
 # - Deselecting phrase by tapping somewhere else
@@ -29,6 +29,12 @@ class App extends Spine.Controller
       phrase = phrase + ". "
       el = $("<span class='phrase' />").text(phrase)
       @append el
+    
+    @canvas = $("canvas").get(0)
+    $("canvas").attr(width: $(document).width(), height: $(document).height())
+    ctx = @canvas.getContext("2d")
+    ctx.fillStyle = "rgba(248, 248, 192, 0.35)"
+    @context = ctx
     
   select: (e) ->
     @_deselect()
@@ -66,7 +72,7 @@ class App extends Spine.Controller
   _images: (phrase, hilights) ->
     # First we need to get some sort of bounds for the phrase
     phraseFrame = phrase.frame()
-    $("#bounds").css(phraseFrame)
+    # $("#bounds").css(phraseFrame)
 
     edges = @_allEdges(phrase, hilights)
     balancedEdges = @_balanceEdges(edges)
@@ -74,6 +80,8 @@ class App extends Spine.Controller
     # console.log hilights
     # console.log balancedEdges
 
+    @context.clearRect(0, 0, @canvas.width, @canvas.height)
+    $(@canvas).gfx(opacity: 0, {duration: 0, queue: false})
     @_imagesAdded = 0
 
     topOffset = phraseFrame.top - (IMAGE_HEIGHT + IMAGE_MARGIN_TOP)
@@ -84,12 +92,19 @@ class App extends Spine.Controller
     @_addVerticalImages(hilights, balancedEdges.left, leftOffset, 'left')
     rightOffset = (phraseFrame.left+phraseFrame.width) + IMAGE_MARGIN_LEFT
     @_addVerticalImages(hilights, balancedEdges.right, rightOffset, 'right')
+    
+    setTimeout ->
+      $(@canvas).gfx({opacity: 1}, {duration: 1000, queue: false})
+    , 1000
+    # $(@canvas).gfx({opacity: 1}, {duration: 1000})
+    # $(@canvas).gfxFadeIn()
 
   _addHorizontalImages: (hilights, selectedHilights, offset, direction) ->
     for hilightName in selectedHilights
       hilight = hilights[hilightName]
       left = hilight.frame().left
       left -= (IMAGE_WIDTH - hilight.frame().width)/2
+      @_addGlow(hilight, left, offset, direction)
       @_addImage(left, offset, direction)
   
   _addVerticalImages: (hilights, selectedHilights, offset, direction) ->
@@ -97,8 +112,46 @@ class App extends Spine.Controller
       hilight = hilights[hilightName]
       top = hilight.frame().top
       top -= (IMAGE_HEIGHT - hilight.frame().height)/2
+      @_addGlow(hilight, offset, top, direction)
       @_addImage(offset, top, direction)
+  
+  _addGlow: (hilight, left, top, direction) ->
+    frame = hilight.frame()
+    imageFrame = {left: left, top: top, width: IMAGE_WIDTH, height: IMAGE_HEIGHT}
+    console.log "Adding hilight at hilight frame: ", frame
     
+    console.log direction
+    if direction == 'top'
+      topLeft = {x: imageFrame.left, y: imageFrame.top+IMAGE_HEIGHT}
+      topRight = {x: imageFrame.left+IMAGE_WIDTH, y: imageFrame.top+IMAGE_HEIGHT}
+      bottomLeft = {x: frame.left, y: frame.top}
+      bottomRight = {x: frame.left+frame.width, y: frame.top}
+    else if direction == 'bottom'
+      topLeft = {x: imageFrame.left, y: imageFrame.top}
+      topRight = {x: imageFrame.left+IMAGE_WIDTH, y: imageFrame.top}
+      bottomLeft = {x: frame.left, y: frame.top+frame.height}
+      bottomRight = {x: frame.left+frame.width, y: frame.top+frame.height}
+    else if direction == 'left'
+      topLeft = {x: imageFrame.left+IMAGE_WIDTH, y: imageFrame.top}
+      topRight = {x: imageFrame.left+IMAGE_WIDTH, y: imageFrame.top+IMAGE_HEIGHT}
+      bottomLeft = {x: frame.left, y: frame.top}
+      bottomRight = {x: frame.left, y: frame.top+frame.height}
+    else if direction == 'right'
+      topLeft = {x: imageFrame.left, y: imageFrame.top}
+      topRight = {x: imageFrame.left, y: imageFrame.top+IMAGE_HEIGHT}
+      bottomLeft = {x: frame.left+frame.width, y: frame.top}
+      bottomRight = {x: frame.left+frame.width, y: frame.top+frame.height}
+    else
+      return
+    
+    @context.beginPath();
+    @context.moveTo(topLeft.x, topLeft.y);
+    @context.lineTo(topRight.x, topRight.y);
+    @context.lineTo(bottomRight.x, bottomRight.y);
+    @context.lineTo(bottomLeft.x, bottomLeft.y);
+    @context.closePath();
+    @context.fill();
+  
   _addImage: (left, top, direction) ->
     item = $("<div />").addClass('image')
     item.css(left: left, top: top)
