@@ -294,8 +294,8 @@ class App extends Spine.Controller
     windowWidth = $(window).width()
     windowHeight = $(window).height()
 
-    left = windowWidth/2 - (windowWidth-width)/2;
-    top = windowHeight/2 - (windowHeight-height)/2;
+    left = windowWidth/2 - width/2;
+    top = windowHeight/2 - height/2;
     
     preview = new Preview(image: image, left: left, top: top, width: width, height: height)
     preview.didClose = @_close
