@@ -352,7 +352,7 @@ class App extends Spine.Controller
   # Playing the game
   # ---------------------------------------------------------------------------
   
-  showGame: ->
+  showGame: =>
     @_deselect()
     @el.toggle()
     @game.toggle()

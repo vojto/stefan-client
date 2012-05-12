@@ -8,7 +8,7 @@ class Game extends Spine.Controller
     'tap .again': 'again'
   
   constructor: ->
-    @el = $("#game")
+    @el = $("#game").hide()
     super
     
     paths = ['/preview.jpg', 'preview2.jpg']
@@ -77,5 +77,8 @@ class Game extends Spine.Controller
   
   again: ->
     @_showQuestion(@question)
+  
+  toggle: ->
+    @el.toggle()
 
 module.exports = Game
