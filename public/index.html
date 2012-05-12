@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8>
+  <meta content='width=device-width, minimum-scale=1.0, maximum-scale=1.0' name='viewport'>
+
+  <title>App</title>
+  <link rel="stylesheet" href="/application.css" type="text/css" charset="utf-8">
+  <link href='http://fonts.googleapis.com/css?family=Goudy+Bookletter+1911' rel='stylesheet' type='text/css'>
+
+  <script src="/application.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    var jQuery  = require("jqueryify");
+    var exports = this;
+    jQuery(function(){
+      var App = require("index");
+      exports.app = new App({el: $("#content")});
+    });
+  </script>
+</head>
+<body>
+  <div id="content">
+    
+  </div>
+  
+  <div id="bounds"></div>
+</body>
+</html>
