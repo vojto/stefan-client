@@ -6,6 +6,8 @@ text = require('./phrases')
 Spine = require('spine')
 _     = require('lib/underscore')
 
+Preview = require('controllers/preview')
+
 IMAGE_HEIGHT = 100
 IMAGE_MARGIN_TOP = 10
 IMAGE_MARGIN_LEFT = 10
@@ -295,17 +297,13 @@ class App extends Spine.Controller
     left = windowWidth/2 - (windowWidth-width)/2;
     top = windowHeight/2 - (windowHeight-height)/2;
     
-    preview = $('<img />').attr('src', '/preview.jpg').addClass('preview')
-    preview.css({left: left, top: top, opacity: 0})
+    preview = new Preview(image: image, left: left, top: top)
     @append preview
-    
-    showPreview = ->
-      preview.gfx({opacity: 1}, {duration: 300})
-    
-    # image.gfx({scale: 4, translateX: , translateY: (top-original.top)}, {duration: 300, complete: showPreview, easing: 'linear'})
+
+    showPreview = -> preview.show()
+
     translateX = (left-original.left)/4
-    translateY = (top-original.top)/4
-    
+    translateY = (top-original.top)/4    
     image.gfx({scale: 4, translateX: "#{translateX}px", translateY: "#{translateY}px"}, {duration: 300, complete: showPreview, easing: 'linear'})
   
   _close: (image) ->
