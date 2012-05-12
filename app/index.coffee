@@ -19,7 +19,7 @@ IMAGE_WIDTH = 130
 class App extends Spine.Controller
   events:
     'click .phrase': 'select'
-    'touchstart .phrase': 'select'
+    'touchend .phrase': 'select'
     'click .image': 'open'
   
   constructor: ->
