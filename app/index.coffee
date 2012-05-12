@@ -316,6 +316,7 @@ class App extends Spine.Controller
 
     left = windowWidth/2 - width/2;
     top = windowHeight/2 - height/2;
+    top += $(document).scrollTop()
     
     preview = new Preview(image: image, left: left, top: top, width: width, height: height)
     preview.didClose = @_close
