@@ -38,14 +38,26 @@ body
   // border 1px solid red
 
 .image
-  background url(/test.png)
+  z-index 15
+  background #000
   width 130px
   height 100px
   position absolute
   // border 3px solid #fff
   box-shadow(0px 1px 10px rgba(0, 0, 0, 0.5))
+  -webkit-transform-origin 0% 0%
+  
+  &.open
+    z-index 20
+
+.preview
+  position absolute
+  z-index 25
+  pointer-events none
+  -webkit-transform-origin 0% 0%
 
 canvas
+  z-index 10
   position absolute
   top 0px
   left 0px

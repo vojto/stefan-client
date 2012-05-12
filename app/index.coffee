@@ -158,6 +158,7 @@ class App extends Spine.Controller
   
   _addImage: (left, top, direction) ->
     item = $("<div />").addClass('image')
+    image = $("<img />").addClass('thumbnail').attr('src', '/test.png').appendTo(item)
     item.css(left: left, top: top)
     props = {}
     if direction == 'left'
@@ -263,5 +264,49 @@ class App extends Spine.Controller
       bottom: Math.abs((phraseFrame.top+phraseFrame.height) - (frame.top+frame.height))
       right: Math.abs((phraseFrame.left+phraseFrame.width) - (frame.left+frame.width))
     distance
+  
+  # Opening images
+  # ---------------------------------------------------------------------------
+  
+  open: (e) ->
+    image = $(e.currentTarget)
+    if image.hasClass('open')
+      @_close(image)
+    else
+      @_open(image)
+  
+  _open: (image) ->
+    image.addClass('open')
+    
+    original = image.offset()
+    image.data 'originalOffset', original
+    
+    width = IMAGE_WIDTH*4
+    height = IMAGE_HEIGHT*4
+    
+    windowWidth = $(window).width()
+    windowHeight = $(window).height()
+
+    left = windowWidth/2 - (windowWidth-width)/2;
+    top = windowHeight/2 - (windowHeight-height)/2;
+    
+    preview = $('<img />').attr('src', '/preview.jpg').addClass('preview')
+    preview.css({left: left, top: top, opacity: 0})
+    @append preview
+    
+    showPreview = ->
+      preview.gfx({opacity: 1}, {duration: 300})
+    
+    # image.gfx({scale: 4, translateX: , translateY: (top-original.top)}, {duration: 300, complete: showPreview, easing: 'linear'})
+    translateX = (left-original.left)/4
+    translateY = (top-original.top)/4
+    
+    image.gfx({scale: 4, translateX: "#{translateX}px", translateY: "#{translateY}px"}, {duration: 300, complete: showPreview, easing: 'linear'})
+  
+  _close: (image) ->
+    image.removeClass('open')
+    original = image.data('originalOffset')
+    image.gfx({scale: 1, left: original.left, top: original.top}, {duration: 200})
+    $(".preview").remove()
 
 module.exports = App
