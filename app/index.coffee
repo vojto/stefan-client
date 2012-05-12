@@ -161,20 +161,23 @@ class App extends Spine.Controller
     image = $("<img />").addClass('thumbnail').attr('src', '/test.png').appendTo(item)
     item.css(left: left, top: top)
     props = {}
+    distance = 75
+    duration = 200
+    delay = 100
     if direction == 'left'
-      props.marginLeft = 50
+      props.translateX = "#{distance}px"
     else if direction == 'right'
-      props.marginLeft = -50
+      props.translateX = "-#{distance}px"
     else if direction == 'top'
-      props.marginTop = 50
+      props.translateY = "#{distance}px"
     else if direction == 'bottom'
-      props.marginTop = -50
+      props.translateY = "-#{distance}px"
     props.opacity = 0
     props.scale = 0.5
     item.gfx(props, {duration: 0})
     @append item
-    item.delay(@_imagesAdded * 100)
-    item.gfx({opacity: 1, scale: 1, marginLeft: 0, marginTop: 0}, {duration: 400})
+    item.delay(@_imagesAdded * delay)
+    item.gfx({opacity: 1, scale: 1, translateX: "0px", translateY: "0px"}, {duration: duration})
     @_imagesAdded += 1
   
   # Drawing glow
