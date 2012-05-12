@@ -18,6 +18,7 @@ class App extends Spine.Controller
   events:
     'click .phrase': 'select'
     'touchstart .phrase': 'select'
+    'click .image': 'open'
   
   constructor: ->
     super
@@ -36,49 +37,51 @@ class App extends Spine.Controller
     ctx.fillStyle = "rgba(248, 248, 192, 0.35)"
     @context = ctx
     
+  # Selecting
+  # ---------------------------------------------------------------------------
+    
   select: (e) ->
     @_deselect()
     phrase = $(e.currentTarget)
     text = phrase.text()
     @_hilight(phrase)
-    
-    # 01 Find the meaning-words in the phrase
-    # (This will be probably delegated to the server)
-    
-    # For now we're just gonna simulate this
-    meawords = ["study", "night skies", "telescopes", "midnight", "planets"]
-    # -----------------------------------------------------
-    
-    # 02 Hilight the meaning-words
-    
+
+    meawords = ["study", "night skies", "telescopes", "midnight", "planets"]    
     for meaword in meawords
       text = text.replace meaword, '<span class="hilight">' + meaword + '</span>'
     phrase.html(text)
     hilights = @_hilightsDict(phrase)
-    
-    # -----------------------------------------------------
-    
-    # 03 Show some images for each of the hilight/meaword
+
     @_images(phrase, hilights)    
-    # -----------------------------------------------------
-  
+
   _hilightsDict: (phrase) ->
     hilights = {}
     for hilight in phrase.find("span.hilight")
       hilight = $(hilight)
       hilights[hilight.text()] = hilight
     hilights
+    
+  _hilight: (phrase) ->
+    @el.find('.phrase').removeClass('selected')
+    phrase.addClass("selected")
+    $("body").addClass("selected")
+    
+  _deselect: =>
+    $("body").removeClass("selected")
+    phrases = @$(".phrase")
+    for phrase in phrases
+      phrase = $(phrase)
+      phrase.html(phrase.text())
+    @$(".image").remove()
+    
+  # Showing images
+  # ---------------------------------------------------------------------------
   
   _images: (phrase, hilights) ->
-    # First we need to get some sort of bounds for the phrase
     phraseFrame = phrase.frame()
-    # $("#bounds").css(phraseFrame)
 
     edges = @_allEdges(phrase, hilights)
     balancedEdges = @_balanceEdges(edges)
-    
-    # console.log hilights
-    # console.log balancedEdges
 
     @context.clearRect(0, 0, @canvas.width, @canvas.height)
     $(@canvas).gfx(opacity: 0, {duration: 0, queue: false})
@@ -96,8 +99,6 @@ class App extends Spine.Controller
     setTimeout ->
       $(@canvas).gfx({opacity: 1}, {duration: 1000, queue: false})
     , 1000
-    # $(@canvas).gfx({opacity: 1}, {duration: 1000})
-    # $(@canvas).gfxFadeIn()
 
   _addHorizontalImages: (hilights, selectedHilights, offset, direction) ->
     parsedHilights = []
@@ -153,6 +154,31 @@ class App extends Spine.Controller
       @_addGlow(hilight, position.left, position.top, direction)
       @_addImage(position.left, position.top, direction)
   
+  
+  
+  _addImage: (left, top, direction) ->
+    item = $("<div />").addClass('image')
+    item.css(left: left, top: top)
+    props = {}
+    if direction == 'left'
+      props.marginLeft = 50
+    else if direction == 'right'
+      props.marginLeft = -50
+    else if direction == 'top'
+      props.marginTop = 50
+    else if direction == 'bottom'
+      props.marginTop = -50
+    props.opacity = 0
+    props.scale = 0.5
+    item.gfx(props, {duration: 0})
+    @append item
+    item.delay(@_imagesAdded * 100)
+    item.gfx({opacity: 1, scale: 1, marginLeft: 0, marginTop: 0}, {duration: 400})
+    @_imagesAdded += 1
+  
+  # Drawing glow
+  # ---------------------------------------------------------------------------
+  
   _addGlow: (hilight, left, top, direction) ->
     frame = hilight.frame()
     imageFrame = {left: left, top: top, width: IMAGE_WIDTH, height: IMAGE_HEIGHT}
@@ -189,25 +215,8 @@ class App extends Spine.Controller
     @context.closePath();
     @context.fill();
   
-  _addImage: (left, top, direction) ->
-    item = $("<div />").addClass('image')
-    item.css(left: left, top: top)
-    props = {}
-    if direction == 'left'
-      props.marginLeft = 50
-    else if direction == 'right'
-      props.marginLeft = -50
-    else if direction == 'top'
-      props.marginTop = 50
-    else if direction == 'bottom'
-      props.marginTop = -50
-    props.opacity = 0
-    props.scale = 0.5
-    item.gfx(props, {duration: 0})
-    @append item
-    item.delay(@_imagesAdded * 100)
-    item.gfx({opacity: 1, scale: 1, marginLeft: 0, marginTop: 0}, {duration: 400})
-    @_imagesAdded += 1
+  # Distributing meawords to edges
+  # ---------------------------------------------------------------------------
   
   _allEdges: (phrase, hilights) ->
     edges = {}
@@ -235,7 +244,6 @@ class App extends Spine.Controller
         return hilightName
     null
       
-      
   _edges: (phraseFrame, frame) ->
     distance = @_edgeDistances(phraseFrame, frame)
     
@@ -255,18 +263,5 @@ class App extends Spine.Controller
       bottom: Math.abs((phraseFrame.top+phraseFrame.height) - (frame.top+frame.height))
       right: Math.abs((phraseFrame.left+phraseFrame.width) - (frame.left+frame.width))
     distance
-  
-  _hilight: (phrase) ->
-    @el.find('.phrase').removeClass('selected')
-    phrase.addClass("selected")
-    $("body").addClass("selected")
-    
-  _deselect: =>
-    $("body").removeClass("selected")
-    phrases = @$(".phrase")
-    for phrase in phrases
-      phrase = $(phrase)
-      phrase.html(phrase.text())
-    @$(".image").remove()
 
 module.exports = App
