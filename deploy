@@ -1,0 +1,6 @@
+echo "Building"
+hem build
+git add .
+git commit -m "Building"
+git push
+ssh vojto@rinik.net "cd /var/www/apps/stefan && git pull"
