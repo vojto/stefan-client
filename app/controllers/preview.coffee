@@ -32,7 +32,7 @@ class Preview extends Spine.Controller
     @images.find('li:first').css({display: 'block'})
     
     setTimeout =>
-      swipe = new Swipe(@images.get(0))
+      @swipe = new Swipe(@images.get(0))
     , 100
     
     
@@ -54,10 +54,10 @@ class Preview extends Spine.Controller
     @_isVisible = true
   
   like: ->
-    alert 'liking'
+    #
   
   dislike: ->
-    alert 'disliking'
+    @swipe.next()
   
   close: ->
     return unless @_isVisible

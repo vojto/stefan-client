@@ -73,7 +73,9 @@ class App extends Spine.Controller
       words = JSON.parse(localStorage[key])
       @_showWords(phrase, words)
     else
+      $("#loading").show()
       $.ajax "#{Config.server}/phrase/#{text}", complete: ({responseText}) =>
+        $("#loading").hide()
         try
           words = JSON.parse(responseText)
         catch error
