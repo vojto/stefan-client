@@ -44,7 +44,7 @@ class Game extends Spine.Controller
       options = $("<div />").addClass('options')
       @append options
 
-      option = $("<div />").addClass('option').appendTo(options)
+      option = $("<div />").addClass('option').addClass('button').appendTo(options)
       option.text(optionText)
   
   select: (e) ->
@@ -61,7 +61,7 @@ class Game extends Spine.Controller
     
     result = $("<div />").addClass('result').addClass('correct')
     $("<h1 />").text("Correct!").appendTo(result)
-    $("<div />").addClass("button").addClass("next").text("Next question").appendTo(result)
+    $("<div />").addClass("button").addClass("next").addClass("xl").text("Next question").appendTo(result)
     @append result
   
   _showWrong: ->
@@ -69,7 +69,7 @@ class Game extends Spine.Controller
     
     result = $("<div />").addClass('result').addClass('wrong')
     $("<h1 />").text("Wrong!").appendTo(result)
-    $("<div />").addClass("button").addClass("again").text("Try again?").appendTo(result)
+    $("<div />").addClass("button").addClass("again").addClass("xl").text("Try again?").appendTo(result)
     @append result
   
   next: ->

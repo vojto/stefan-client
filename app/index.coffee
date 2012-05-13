@@ -9,6 +9,7 @@ _     = require('lib/underscore')
 Navigation  = require('controllers/navigation')
 Preview     = require('controllers/preview')
 Game        = require('controllers/game')
+Docs        = require('controllers/docs')
 Config      = require('config')
 
 IMAGE_HEIGHT = 100
@@ -36,10 +37,22 @@ class App extends Spine.Controller
     @navigation = new Navigation(app: @)
     @game       = new Game(app: @)
     @main = $(".main")
+    @docs = new Docs(app: @)
   
     @_buildCanvas()     # Canvas
     
-    @loadText(testText) # Load demo text
+    $.ajax "#{Config.server}/uploaded", complete: ({responseText}) =>
+      docs = JSON.parse(responseText)
+      names = _.keys(docs)
+      if names.length == 0
+        @loadText(testText) # Load demo text
+      else
+        # @loadText(testText) # Load demo text
+        @_showDocs(docs)
+  
+  _showDocs: (docs) ->
+    @el.hide()
+    @docs.show(docs)
   
   _buildCanvas: ->
     @canvas = $("canvas").get(0)
@@ -49,6 +62,8 @@ class App extends Spine.Controller
     @context = ctx
 
   loadText: (text) ->
+    @docs.hide()
+    @el.show()
     text = text.replace /\.$/, ''
     text = text.replace ',', ''
     phrases = text.split /[\.\?]{1}\s*/
@@ -383,11 +398,11 @@ class App extends Spine.Controller
   smaller: ->
     @_fontSize -= 1
     @_applyFontSize()
-  
+
   larger: ->
     @_fontSize += 1
     @_applyFontSize()
-  
+
   _applyFontSize: ->
     @_deselect()
     $("#content").css({fontSize: "#{@_fontSize}px"})

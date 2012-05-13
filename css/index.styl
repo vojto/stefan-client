@@ -170,16 +170,6 @@ canvas
     width 400px
     margin auto
     margin-top 50px
-    .option
-      width 200px
-      height 30px
-      margin-bottom 20px
-      float left
-      font-size 25px
-      border-box()
-      cursor pointer
-      &:hover
-        border-bottom 2px solid #000
 
   .result
     h1
@@ -191,18 +181,6 @@ canvas
     
     &.wrong
       background url(/shape_wrong.png) no-repeat center 60px
-    
-    .button
-      display block
-      color #959595
-      font-size 20px
-      border 1px solid #bebebe
-      width 150px
-      margin auto
-      margin-top 50px
-      padding 10px 0px
-      border-radius(3px)
-      cursor pointer
 
 // Loading
 // ----------------------------------------------------------------------------
@@ -222,3 +200,39 @@ canvas
   -webkit-animation-timing-function linear
   // -webkit-transition all .25s linear
   display none
+
+// Docs
+// ----------------------------------------------------------------------------
+
+#docs
+  padding-top 150px
+  width 200px
+  margin auto
+  text-align center
+
+// General
+// ----------------------------------------------------------------------------
+  
+.button.xl
+  display block
+  color #959595
+  font-size 20px
+  border 1px solid #bebebe
+  width 150px
+  margin auto
+  margin-top 50px
+  padding 10px 0px
+  border-radius(3px)
+  cursor pointer
+
+.button.option
+  display block
+  width 200px
+  height 30px
+  margin-bottom 20px
+  float left
+  font-size 25px
+  border-box()
+  cursor pointer
+  &:hover
+    border-bottom 2px solid #000
