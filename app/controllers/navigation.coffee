@@ -53,8 +53,8 @@ class Navigation extends Spine.Controller
       xhr = new XMLHttpRequest
       xhr.open 'POST', "#{Config.server}/upload", true
       xhr.onload = (e) =>
-        console.log "finished uploading file", e
-        console.log xhr.responseText
+        data = xhr.responseText
+        @app.showFile(data)
       xhr.send(formData)
       
     

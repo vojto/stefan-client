@@ -50,7 +50,8 @@ class App extends Spine.Controller
 
   loadText: (text) ->
     text = text.replace /\.$/, ''
-    phrases = text.split /\.\s*/
+    text = text.replace ',', ''
+    phrases = text.split /[\.\?]{1}\s*/
     @el.empty()
     for phrase in phrases
       phrase = phrase + ". "
