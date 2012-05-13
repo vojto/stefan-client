@@ -10,7 +10,7 @@ class Docs extends Spine.Controller
     @el.hide()
   
   show: (docs) =>
-    @docs or= docs
+    @docs = docs if docs
     for name, doc of docs
       option = $("<a />").addClass('option').addClass('button')
       option.text(name)

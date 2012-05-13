@@ -69,6 +69,8 @@ class Game extends Spine.Controller
   toggle: ->
     @el.toggle()
   
+  hide: -> @el.hide()
+  
   start: ->
     words = @app.knownWords
     

@@ -47,21 +47,19 @@ class App extends Spine.Controller
       try
         docs = JSON.parse(responseText)
       catch error
-        @loadText(testText)
         return
       names = _.keys(docs)
-      if names.length == 0
-        @loadText(testText) # Load demo text
-      else
-        # @loadText(testText) # Load demo text
-        @_showDocs(docs)
+      @_showDocs(docs)
   
   _showDocs: (docs) ->
+    @_deselect()
     @el.hide()
+    @game.hide()
     @docs.show(docs)
   
   _showContent: ->
     @docs.hide()
+    @game.hide()
     @el.show()
   
   _buildCanvas: ->
