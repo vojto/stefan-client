@@ -1,5 +1,6 @@
 Spine = require('spine')
 require('spine.mobile')
+_ = require('lib/underscore')
 
 class Game extends Spine.Controller
   events:
@@ -80,5 +81,31 @@ class Game extends Spine.Controller
   
   toggle: ->
     @el.toggle()
+  
+  start: ->
+    words = @app.knownWords
+    @questions = []
+    index = 0
+    keys = _.keys(words)
+    for word, hilight of words
+      options = [word]
+      
+      total = 4
+      total = keys.length if keys.length < total
+      
+      while options.length < total
+         option = keys[Math.floor(Math.random()*keys.length)];
+         options.push(option) unless _.include(options, option)
+        
+      options.sort -> 0.5 - Math.random()
+      
+      question =
+        image: hilight.data('imageURL')
+        options: options
+        answer: word
+      
+      @questions.push(question)
+    console.log @questions
+    @next()
 
 module.exports = Game

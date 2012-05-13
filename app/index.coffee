@@ -37,6 +37,8 @@ class App extends Spine.Controller
     
     @main = $(".main")
     
+    @knownWords = {}
+    
     $(document).bind 'touchstart', =>
       @_touchEnabled = true
       $(document).unbind 'touchstart'
@@ -82,12 +84,15 @@ class App extends Spine.Controller
 
     phrase.html(text)
     hilights = @_hilightsDict(phrase)
-    
+
     for hilightName, hilight of hilights
       url = words[hilightName.toLowerCase()]
       hilight.data('imageURL', url)
-    
+      @knownWords[hilightName] = hilight
+
     @_images(phrase, hilights)
+    
+    # @_saveKnownWords()
 
   _hilightsDict: (phrase) ->
     hilights = {}
@@ -104,6 +109,7 @@ class App extends Spine.Controller
   _deselect: =>
     $("body").removeClass("selected")
     phrases = @$(".phrase")
+    $(".hilight").detach()
     for phrase in phrases
       phrase = $(phrase)
       phrase.html(phrase.text())
@@ -375,6 +381,7 @@ class App extends Spine.Controller
     @_deselect()
     @el.toggle()
     @game.toggle()
+    @game.start()
     
     
 
