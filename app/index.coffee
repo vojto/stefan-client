@@ -2,7 +2,7 @@ require('lib/setup')
 require('lib/jquery_frame')
 require('gfx')
 
-text = require('./phrases')
+testText = require('./phrases')
 Spine = require('spine')
 _     = require('lib/underscore')
 
@@ -30,32 +30,33 @@ class App extends Spine.Controller
   constructor: ->
     super
     
-    @_fontSize = 25
-    
-    @navigation = new Navigation(app: @)
-    @game       = new Game(app: @)
-    
-    @main = $(".main")
-    
+    @_fontSize = 25     # State
     @knownWords = {}
     
-    $(document).bind 'touchstart', =>
-      @_touchEnabled = true
-      $(document).unbind 'touchstart'
+                        # Modules
+    @navigation = new Navigation(app: @)
+    @game       = new Game(app: @)
+    @main = $(".main")
+  
+    @_buildCanvas()     # Canvas
     
-    text = text.replace /\.$/, ''
-    phrases = text.split /\.\s*/
-    
-    for phrase in phrases
-      phrase = phrase + ". "
-      el = $("<span class='phrase' />").text(phrase)
-      @append el
-    
+    @loadText(testText) # Load demo text
+  
+  _buildCanvas: ->
     @canvas = $("canvas").get(0)
     $("canvas").attr(width: $(document).width(), height: $(document).height())
     ctx = @canvas.getContext("2d")
     ctx.fillStyle = "rgba(248, 248, 192, 0.35)"
     @context = ctx
+
+  loadText: (text) ->
+    text = text.replace /\.$/, ''
+    phrases = text.split /\.\s*/
+    @el.empty()
+    for phrase in phrases
+      phrase = phrase + ". "
+      el = $("<span class='phrase' />").text(phrase)
+      @append el
     
   # Selecting
   # ---------------------------------------------------------------------------
@@ -78,6 +79,7 @@ class App extends Spine.Controller
         @_showWords(phrase, words)
   
   _showWords: (phrase, words) ->
+    text = phrase.text()
     for word, url of words
       wordReg = new RegExp("(#{word})", "gi")
       text = text.replace wordReg, '<span class="hilight">$1</span>'
@@ -317,7 +319,6 @@ class App extends Spine.Controller
   # ---------------------------------------------------------------------------
   
   open: (e) ->
-    # return if @_touchEnabled
     image = $(e.currentTarget)
     if image.hasClass('open')
       # @_close(image)
@@ -382,6 +383,13 @@ class App extends Spine.Controller
     @el.toggle()
     @game.toggle()
     @game.start()
+  
+  # Handling file upload
+  # ---------------------------------------------------------------------------
+
+  showFile: (data) ->
+    @_deselect()
+    @loadText(data)
     
     
 
