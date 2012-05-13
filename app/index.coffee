@@ -63,26 +63,31 @@ class App extends Spine.Controller
     phrase = $(e.currentTarget)
     text = phrase.text()
     @_hilight(phrase)
+    key = text.replace(/\s+/g, '-')
+
+    # Try to find the phrase in local storage
+    if localStorage[key]
+      words = JSON.parse(localStorage[key])
+      @_showWords(phrase, words)
+    else
+      $.ajax "#{SERVER}/phrase/#{text}", complete: ({responseText}) =>
+        words = JSON.parse(responseText)
+        localStorage[key] = JSON.stringify(words)
+        @_showWords(phrase, words)
+  
+  _showWords: (phrase, words) ->
+    for word, url of words
+      wordReg = new RegExp("(#{word})", "gi")
+      text = text.replace wordReg, '<span class="hilight">$1</span>'
+
+    phrase.html(text)
+    hilights = @_hilightsDict(phrase)
     
-    # Highlight locally available expressions
-    # Make request to all expressions
-    complete = ({responseText}) =>
-      words = JSON.parse(responseText)
-
-      for word, url of words
-        wordReg = new RegExp("(#{word})", "gi")
-        text = text.replace wordReg, '<span class="hilight">$1</span>'
-
-      phrase.html(text)
-      hilights = @_hilightsDict(phrase)
-      
-      for hilightName, hilight of hilights
-        url = words[hilightName.toLowerCase()]
-        hilight.data('imageURL', url)
-      
-      @_images(phrase, hilights)
-
-    $.ajax("#{SERVER}/phrase/#{text}", complete: complete)
+    for hilightName, hilight of hilights
+      url = words[hilightName.toLowerCase()]
+      hilight.data('imageURL', url)
+    
+    @_images(phrase, hilights)
 
   _hilightsDict: (phrase) ->
     hilights = {}
@@ -175,7 +180,6 @@ class App extends Spine.Controller
       lastImage = last.data('imagePosition')
       currentImage = hilight.data('imagePosition')
       overlap = currentImage[axis] - (lastImage[axis]+size)
-      console.log overlap
       if overlap < 0
         half = Math.abs(overlap)/2
         lastImage[axis] -= half
@@ -223,7 +227,6 @@ class App extends Spine.Controller
     frame = hilight.frame()
     imageFrame = {left: left, top: top, width: IMAGE_WIDTH, height: IMAGE_HEIGHT}
     
-    console.log direction
     if direction == 'top'
       topLeft = {x: imageFrame.left, y: imageFrame.top+IMAGE_HEIGHT}
       topRight = {x: imageFrame.left+IMAGE_WIDTH, y: imageFrame.top+IMAGE_HEIGHT}
