@@ -1,6 +1,7 @@
 Spine = require('spine')
 require('spine.mobile')
 _ = require('lib/underscore')
+Config = require('config')
 
 class Game extends Spine.Controller
   events:
@@ -84,6 +85,7 @@ class Game extends Spine.Controller
   
   start: ->
     words = @app.knownWords
+    
     @questions = []
     index = 0
     keys = _.keys(words)
@@ -100,7 +102,7 @@ class Game extends Spine.Controller
       options.sort -> 0.5 - Math.random()
       
       question =
-        image: hilight.data('imageURL')
+        image: "#{Config.assets}/#{_.first(hilight.imageURL)}"
         options: options
         answer: word
       

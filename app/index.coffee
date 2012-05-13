@@ -9,13 +9,12 @@ _     = require('lib/underscore')
 Navigation  = require('controllers/navigation')
 Preview     = require('controllers/preview')
 Game        = require('controllers/game')
+Config      = require('config')
 
 IMAGE_HEIGHT = 100
 IMAGE_MARGIN_TOP = 10
 IMAGE_MARGIN_LEFT = 10
 IMAGE_WIDTH = 130
-
-SERVER = 'http://147.232.55.155:5000'
 
 isiPad = -> navigator.userAgent.match(/iPad/i) != null
 
@@ -73,7 +72,7 @@ class App extends Spine.Controller
       words = JSON.parse(localStorage[key])
       @_showWords(phrase, words)
     else
-      $.ajax "#{SERVER}/phrase/#{text}", complete: ({responseText}) =>
+      $.ajax "#{Config.server}/phrase/#{text}", complete: ({responseText}) =>
         try
           words = JSON.parse(responseText)
         catch error
@@ -94,7 +93,7 @@ class App extends Spine.Controller
     for hilightName, hilight of hilights
       url = words[hilightName.toLowerCase()]
       hilight.data('imageURL', url)
-      @knownWords[hilightName] = hilight
+      @knownWords[hilightName] = hilight.data()
 
     @_images(phrase, hilights)
     
@@ -210,7 +209,9 @@ class App extends Spine.Controller
   
   _addImage: (hilight, left, top, direction) ->
     item = $("<div />").addClass('image')
-    url = hilight.data('imageURL')
+    item.data('hilight', hilight)
+    urls = hilight.data('imageURL')
+    url = "#{Config.assets}/" + _.first(urls)
     image = $("<img />").addClass('thumbnail').attr('src', url).attr('width', '130').attr('height', '100').appendTo(item)
     item.css(left: left, top: top)
     props = {}

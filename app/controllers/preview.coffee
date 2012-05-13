@@ -1,6 +1,7 @@
 Spine = require('spine')
 _ = require('lib/underscore')
 Swipe = require('lib/swipe')
+Config      = require('config')
 
 class Preview extends Spine.Controller
   className: 'preview'
@@ -14,11 +15,13 @@ class Preview extends Spine.Controller
     super
 
     @_isVisible = false
+    @hilight = @image.data('hilight')
+    imageURL = @hilight.data('imageURL')
 
     @content = $('<div />').addClass('content')
     @append @content
 
-    images = ['/preview.jpg', '/preview2.jpg']
+    images = imageURL
     
     @images = $('<div />').addClass('images')
     @wrapper = $('<ul />').addClass('wrapper').appendTo(@images)
@@ -42,7 +45,8 @@ class Preview extends Spine.Controller
 
   _addImage: (path) ->  
     li = $('<li />')
-    image = $('<img />').attr('src', path).addClass('preview').appendTo(li)
+    path = "#{Config.assets}/#{path}"
+    image = $('<img />').attr('src', path).addClass('preview').appendTo(li).attr('width', '520').attr('height', '400')
     @wrapper.append li
   
   show: ->
