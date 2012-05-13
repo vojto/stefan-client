@@ -1,6 +1,7 @@
 Spine = require('spine')
 require('spine.mobile')
 _ = require('lib/underscore')
+Config = require('config')
 
 class Navigation extends Spine.Controller
   events:
@@ -46,6 +47,16 @@ class Navigation extends Spine.Controller
         data = e.target.result
         @app.showFile(data)
       reader.readAsText(file)
+    else
+      formData = new FormData
+      formData.append(file.name, file)
+      xhr = new XMLHttpRequest
+      xhr.open 'POST', "#{Config.server}/upload", true
+      xhr.onload = (e) =>
+        console.log "finished uploading file", e
+        console.log xhr.responseText
+      xhr.send(formData)
+      
     
 
 module.exports = Navigation
