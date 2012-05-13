@@ -42,7 +42,11 @@ class App extends Spine.Controller
     @_buildCanvas()     # Canvas
     
     $.ajax "#{Config.server}/uploaded", complete: ({responseText}) =>
-      docs = JSON.parse(responseText)
+      try
+        docs = JSON.parse(responseText)
+      catch error
+        @loadText(testText)
+        return
       names = _.keys(docs)
       if names.length == 0
         @loadText(testText) # Load demo text
@@ -80,6 +84,7 @@ class App extends Spine.Controller
     @_deselect()
     phrase = $(e.currentTarget)
     text = phrase.text()
+    text = text.replace '\n', ' '
     @_hilight(phrase)
     key = text.replace(/\s+/g, '-')
 

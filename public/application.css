@@ -141,6 +141,15 @@ canvas {
 #navigation .button.plus {
   background: url("/button_add.png");
 }
+#navigation .button.plus input {
+  background: #f00;
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-size: 20px;
+  opacity: 0;
+  cursor: pointer;
+}
 #navigation .button.game {
   background: url("/button_game.png");
 }
@@ -156,20 +165,6 @@ canvas {
   margin: auto;
   margin-top: 50px;
 }
-#game .options .option {
-  width: 200px;
-  height: 30px;
-  margin-bottom: 20px;
-  float: left;
-  font-size: 25px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  cursor: pointer;
-}
-#game .options .option:hover {
-  border-bottom: 2px solid #000;
-}
 #game .result h1 {
   padding-top: 240px;
   font-size: 40px;
@@ -180,7 +175,28 @@ canvas {
 #game .result.wrong {
   background: url("/shape_wrong.png") no-repeat center 60px;
 }
-#game .result .button {
+#loading {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 31px;
+  height: 35px;
+  margin-left: -15px;
+  margin-top: -17px;
+  background: url("/loading.png");
+  -webkit-animation-name: spinnerRotate;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  display: none;
+}
+#docs {
+  padding-top: 150px;
+  width: 200px;
+  margin: auto;
+  text-align: center;
+}
+.button.xl {
   display: block;
   color: #959595;
   font-size: 20px;
@@ -193,4 +209,64 @@ canvas {
   -webkit-border-radius: 3px;
   border-radius: 3px;
   cursor: pointer;
+}
+.button.option {
+  display: block;
+  width: 200px;
+  height: 30px;
+  margin-bottom: 20px;
+  float: left;
+  font-size: 25px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.button.option:hover {
+  border-bottom: 2px solid #000;
+}
+@-moz-keyframes spinnerRotate {
+  0% {
+    -webkit-transform: rotate(360deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(0deg);
+  }
+}
+@-webkit-keyframes spinnerRotate {
+  0% {
+    -webkit-transform: rotate(360deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(0deg);
+  }
+}
+@-o-keyframes spinnerRotate {
+  0% {
+    -webkit-transform: rotate(360deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(0deg);
+  }
+}
+@-ms-keyframes spinnerRotate {
+  0% {
+    -webkit-transform: rotate(360deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(0deg);
+  }
+}
+@keyframes spinnerRotate {
+  0% {
+    -webkit-transform: rotate(360deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(0deg);
+  }
 }
