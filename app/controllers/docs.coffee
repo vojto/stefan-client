@@ -9,8 +9,8 @@ class Docs extends Spine.Controller
     super
     @el.hide()
   
-  show: (docs) ->
-    @docs = docs
+  show: (docs) =>
+    @docs or= docs
     for name, doc of docs
       option = $("<a />").addClass('option').addClass('button')
       option.text(name)
@@ -20,7 +20,7 @@ class Docs extends Spine.Controller
   hide: ->
     @el.hide()
   
-  select: (e) ->
+  select: (e) =>
     dom = $(e.currentTarget)
     doc = @docs[dom.text()]
     @app.showFile(doc)

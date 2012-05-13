@@ -41,6 +41,8 @@ class App extends Spine.Controller
   
     @_buildCanvas()     # Canvas
     
+    $("#logo").click => @_showDocs()
+    
     $.ajax "#{Config.server}/uploaded", complete: ({responseText}) =>
       try
         docs = JSON.parse(responseText)
@@ -58,6 +60,10 @@ class App extends Spine.Controller
     @el.hide()
     @docs.show(docs)
   
+  _showContent: ->
+    @docs.hide()
+    @el.show()
+  
   _buildCanvas: ->
     @canvas = $("canvas").get(0)
     $("canvas").attr(width: $(document).width(), height: $(document).height())
@@ -66,8 +72,7 @@ class App extends Spine.Controller
     @context = ctx
 
   loadText: (text) ->
-    @docs.hide()
-    @el.show()
+    @_showContent()
     text = text.replace /\.$/, ''
     text = text.replace ',', ''
     phrases = text.split /[\.\?]{1}\s*/
@@ -417,6 +422,7 @@ class App extends Spine.Controller
   
   showGame: =>
     @_deselect()
+    return if _.isEmpty(@knownWords)
     @el.toggle()
     @game.toggle()
     @game.start()

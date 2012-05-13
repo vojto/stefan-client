@@ -13,24 +13,10 @@ class Game extends Spine.Controller
     @el = $("#game").hide()
     super
     
-    paths = ['/preview.jpg', 'preview2.jpg']
-    
-    question1 =
-      image: '/preview.jpg'
-      options: ['Telescope', 'Planets', 'Studying', 'Stars']
-      answer: 'Telescope'
-    
-    question2 =
-      image: '/preview2.jpg'
-      options: ['Car', 'City', 'Bridge', 'Forest']
-      answer: 'Bridge'
-    
-    @questions = [question1, question2]
-    
-    @_showQuestion(question1)
-    
   _showQuestion: (question) ->
     @el.empty()
+    
+    return unless question
     
     @question = question
     
