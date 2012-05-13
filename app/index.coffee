@@ -15,6 +15,8 @@ IMAGE_MARGIN_TOP = 10
 IMAGE_MARGIN_LEFT = 10
 IMAGE_WIDTH = 130
 
+SERVER = 'http://147.232.55.155:5000'
+
 # TODO:
 # - Deselecting phrase by tapping somewhere else
 
@@ -61,14 +63,26 @@ class App extends Spine.Controller
     phrase = $(e.currentTarget)
     text = phrase.text()
     @_hilight(phrase)
+    
+    # Highlight locally available expressions
+    # Make request to all expressions
+    complete = ({responseText}) =>
+      words = JSON.parse(responseText)
 
-    meawords = ["study", "night skies", "telescopes", "midnight", "planets"]    
-    for meaword in meawords
-      text = text.replace meaword, '<span class="hilight">' + meaword + '</span>'
-    phrase.html(text)
-    hilights = @_hilightsDict(phrase)
+      for word, url of words
+        wordReg = new RegExp("(#{word})", "gi")
+        text = text.replace wordReg, '<span class="hilight">$1</span>'
 
-    @_images(phrase, hilights)    
+      phrase.html(text)
+      hilights = @_hilightsDict(phrase)
+      
+      for hilightName, hilight of hilights
+        url = words[hilightName.toLowerCase()]
+        hilight.data('imageURL', url)
+      
+      @_images(phrase, hilights)
+
+    $.ajax("#{SERVER}/phrase/#{text}", complete: complete)
 
   _hilightsDict: (phrase) ->
     hilights = {}
@@ -151,6 +165,9 @@ class App extends Spine.Controller
       return -1 if aPos[axis] < bPos[axis]
       return 1 if aPos[axis] > bPos[axis]
       0
+    @_shiftImagesArray(hilights, axis, size)
+  
+  _shiftImagesArray: (hilights, axis, size) ->
     last = _.first(hilights)
     for hilight, i in hilights
       continue if i == 0
@@ -172,13 +189,12 @@ class App extends Spine.Controller
       direction = hilight.data('direction')
       position = hilight.data('imagePosition')
       @_addGlow(hilight, position.left, position.top, direction)
-      @_addImage(position.left, position.top, direction)
+      @_addImage(hilight, position.left, position.top, direction)
   
-  
-  
-  _addImage: (left, top, direction) ->
+  _addImage: (hilight, left, top, direction) ->
     item = $("<div />").addClass('image')
-    image = $("<img />").addClass('thumbnail').attr('src', '/test.jpg').appendTo(item)
+    url = hilight.data('imageURL')
+    image = $("<img />").addClass('thumbnail').attr('src', url).attr('width', '130').attr('height', '100').appendTo(item)
     item.css(left: left, top: top)
     props = {}
     distance = 75
