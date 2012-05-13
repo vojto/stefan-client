@@ -17,15 +17,15 @@ IMAGE_WIDTH = 130
 
 SERVER = 'http://147.232.55.155:5000'
 
+isiPad = -> navigator.userAgent.match(/iPad/i) != null
+
 # TODO:
 # - Deselecting phrase by tapping somewhere else
 
 class App extends Spine.Controller
   events:
-    'click .phrase': 'select'
-    'touchend .phrase': 'select'
-    'click .image': 'open'
-    'touchend .image': 'open'
+    'tap .phrase': 'select'
+    'tap .image': 'open'
   
   constructor: ->
     super
@@ -74,10 +74,14 @@ class App extends Spine.Controller
       @_showWords(phrase, words)
     else
       $.ajax "#{SERVER}/phrase/#{text}", complete: ({responseText}) =>
-        words = JSON.parse(responseText)
+        try
+          words = JSON.parse(responseText)
+        catch error
+          alert 'Cannot connect!'
+          return
         localStorage[key] = JSON.stringify(words)
         @_showWords(phrase, words)
-  
+
   _showWords: (phrase, words) ->
     text = phrase.text()
     for word, url of words
@@ -109,9 +113,10 @@ class App extends Spine.Controller
     $("body").addClass("selected")
     
   _deselect: =>
+    @_closeCurrent()
     $("body").removeClass("selected")
     phrases = @$(".phrase")
-    $(".hilight").detach()
+    # $(".hilight").detach()
     for phrase in phrases
       phrase = $(phrase)
       phrase.html(phrase.text())
@@ -220,6 +225,9 @@ class App extends Spine.Controller
       props.translateY = "#{distance}px"
     else if direction == 'bottom'
       props.translateY = "-#{distance}px"
+    if isiPad()
+      delete props.translateY
+      delete props.translateX
     props.opacity = 0
     props.scale = 0.5
     item.gfx(props, {duration: 1})
@@ -356,9 +364,14 @@ class App extends Spine.Controller
   
   _close: (image) =>
     image.removeClass('open')
+    console.log 'closing', image
     original = image.data('originalOffset')
     image.gfx({scale: 1, left: original.left, top: original.top}, {duration: 400})
     $(".preview").remove()
+    @_currentImage = null
+  
+  _closeCurrent: ->
+    @_close(@_currentImage) if @_currentImage
 
   # Adjusting font size
   # ---------------------------------------------------------------------------
