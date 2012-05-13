@@ -1,3 +1,3 @@
-text = "Stefan is my friend. Stefan and I often do things together."
+text = "Samantha is my girlfriend. Just kidding, I do not have a girlfriend. But hey, I have three computers."
 
 module.exports = text
