@@ -13,3 +13,5 @@ Authors:
 - Martin Viszlai
 - Matej Vančík
 - Jan Timar
+
+This code is released under MIT license, see LICENSE.
