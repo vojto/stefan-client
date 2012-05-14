@@ -2,4 +2,14 @@
 
 Client UI for STEFAN. 
 
-[Download the presentation](https://www.dropbox.com/s/6dhfymnzv2mla2l/STEFAN.pdf)
+[Presentation](http://cl.ly/1Q2u1t0110302l2h3a3R)
+
+Authors:
+
+- Ivan Klimek
+- Vojtech Riník
+- Peter Gonda
+- Veronika Klauzová
+- Martin Viszlai
+- Matej Vančík
+- Jan Timar
